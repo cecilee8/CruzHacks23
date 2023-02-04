@@ -1,0 +1,23 @@
+{
+  "name": "cruzhacks23",
+  "version": "1.0.0",
+  "description": "SlugsOverflow Developers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cecilee8/CruzHacks23.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cecilee8/CruzHacks23/issues"
+  },
+  "homepage": "https://github.com/cecilee8/CruzHacks23#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
