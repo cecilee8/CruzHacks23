@@ -2,6 +2,7 @@ require("dotenv").config();
 const crypto = require("crypto");
 const express = require("express");
 const tedious = require("tedious");
+const { OAuth2Client } = require('google-auth-library');
 
 var port = process.env.PORT || 8080;
 const app = express();
