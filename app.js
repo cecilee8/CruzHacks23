@@ -70,11 +70,30 @@ addEndpoint(true, "/api/post", async (req) => {
         });
 });
 
+addEndpoint(false, "/api/post/:id", async (req) => {
+    var rows = await executeSqlAsync(
+        "SELECT * FROM POSTS WHERE ID=@ID", 
+        {
+            "ID": { type: tedious.TYPES.VarChar, value: req.params.id }
+        });
+    return {
+        id: rows[0][0].value,
+        time: rows[0][1].value,
+        title: rows[0][2].value,
+        description: rows[0][3].value
+    };
+});
+
 addEndpoint(false, "/api/posts", async (req) => {
-    var rows = await executeSqlAsync("SELECT * FROM POSTS", {});
+    var rows = await executeSqlAsync("SELECT ID, TIME, TITLE, DESCRIPTION FROM POSTS", {});
     var result = new Array(rows.length);
     for(var i = 0; i < rows.length; i++) {
-        result[i] = rows[i][0].value;
+        result[i] = {
+            id: rows[i][0].value,
+            time: rows[i][1].value,
+            title: rows[i][2].value,
+            description: rows[i][3].value
+        };
     }
     return { posts: result };
 });
