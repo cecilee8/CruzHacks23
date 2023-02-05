@@ -255,6 +255,7 @@ function EventList() {
           bottom: 20,
           left: 'auto',
           position: 'fixed',
+          backgroundColor: "#FFD600"
         }}>
         <AddIcon />
       </Fab>
@@ -278,7 +279,7 @@ function EventList() {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Sound
+              Create New Flyer
             </Typography>
             <Button autoFocus color="inherit" onClick={handleClose} type = "submit">
               save
