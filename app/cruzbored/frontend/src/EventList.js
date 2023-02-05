@@ -42,13 +42,15 @@ const fetchEvents = (category, setEvent) => {
   })
     .then((response) => {
       console.log(response);
-      if (!response.ok) {
-        throw response;
-      }
+   
       // console.log('user: ' + user.name);
       return response.json();
     })
     .then((json) => {
+      if (!json.ok) {
+        throw json;
+      }
+      console.log('marker111')
       console.log(json);
       setEvent(json.posts);
     })
@@ -83,7 +85,33 @@ function EventList() {
   const onSubmit = (event) => {
     event.preventDefault();
 
-    console.log(newpost);
+    fetch('http://localhost:8080/api/post', {
+      method: 'POST',
+      body: "title=" + encodeURIComponent(newpost.title) + "&description=" + encodeURIComponent(newpost.description),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        if (!res.ok) {
+          console.log('not okay');
+          throw res;
+        }
+        return res.json();
+      })
+      .then(() => {
+        fetchEvents('Main', setEvent);
+      })
+      .catch((err) => {
+        console.log('hello');
+        
+      });
+      // .then((json) => {
+      //   localStorage.setItem('user', JSON.stringify(json));
+      //   history('/');
+      // })
+      console.log(newpost);
   }
   // const post = () => {
   //   localStorage.removeItem('user');
@@ -123,7 +151,7 @@ function EventList() {
                 flexWrap: "wrap",
                 flexDirection: "row",
               }} >
-          {(event).map((item) => (
+          {(event)?.map((item) => (
             <Box
               sx={{
                 marginLeft: 10,
