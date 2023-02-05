@@ -44,8 +44,10 @@ function Home() {
         >
                 <CssBaseline />
           <Toolbar >
-            <Typography variant = 'h6' noWrap component ='div'>
-              {'SlugBored'}
+            <img src='/assets/slugaboard_logo.png' alt="logo" width="60" />
+            <Typography variant = 'h6' noWrap component ='div'
+              sx = {{fontFamily: '"Manrope", sans-serif', fontWeight: "bold"}}>
+              {'SlugsAboard'}
             </Typography>
             <Tooltip title="Log Out">
               <IconButton
