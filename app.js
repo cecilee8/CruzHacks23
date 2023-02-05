@@ -2,9 +2,13 @@ require("dotenv").config();
 const crypto = require("crypto");
 const express = require("express");
 const tedious = require("tedious");
+const cors = require('cors');
+
 
 var port = process.env.PORT || 8080;
 const app = express();
+app.use(cors());
+
 
 var connection = new tedious.Connection({
     server: 'slugbored.database.windows.net',
