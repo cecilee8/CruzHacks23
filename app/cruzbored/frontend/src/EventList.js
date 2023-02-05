@@ -33,7 +33,7 @@ const Transition = React.forwardRef(function Transition(
 
 const fetchEvents = (category, setEvent) => {
   // const user = JSON.parse(localStoage.getItem('user'));
-  fetch('http://localhost:8080/api/posts', {
+  fetch('/api/posts', {
     method: 'GET',
     headers: new Headers({
       // 'Authorization': `Bearer ${???}`,
@@ -85,7 +85,7 @@ function EventList() {
   const onSubmit = (event) => {
     event.preventDefault();
 
-    fetch('http://localhost:8080/api/post', {
+    fetch('/api/post', {
       method: 'POST',
       body: "title=" + encodeURIComponent(newpost.title) + "&description=" + encodeURIComponent(newpost.description),
       headers: {
