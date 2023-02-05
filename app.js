@@ -5,13 +5,13 @@ const tedious = require("tedious");
 const { OAuth2Client } = require('google-auth-library');
 const cors = require('cors');
 
-
 var authClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 var port = process.env.PORT || 8080;
 const app = express();
 app.use(cors());
-
+app.use(express.static("./client/"));
+app.use(express.urlencoded({ extended: true }));
 
 var connection = new tedious.Connection({
     server: 'slugbored.database.windows.net',
@@ -29,9 +29,6 @@ var connection = new tedious.Connection({
         rowCollectionOnRequestCompletion: true
     }
 });
-
-app.use(express.static("./client/"));
-app.use(express.urlencoded({ extended: true }));
 
 function executeSqlAsync(sql, parameters) {
     return new Promise((resolve, reject) => {
@@ -67,14 +64,43 @@ function addEndpoint(isPost, endpoint, callback) {
 }
 
 app.post("/oauth2", async (req, res) => {
-    var ticket = await authClient.verifyIdToken({
-        idToken: req.body.credential,
-        audience: process.env.GOOGLE_CLIENT_ID
-    });
-    var payload = ticket.getPayload();
-    var userId = payload["sub"];
-    res.cookie("userId", userId.toString(), { maxAge: 86400000 });
-    res.send(userId);
+        var ticket = await authClient.verifyIdToken({
+            idToken: req.body.credential,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
+        var payload = ticket.getPayload();
+        var userId = payload["sub"];
+        var sessionId = crypto.randomUUID();
+        var time = Math.floor(Date.now() / 1000);
+
+        var rows = await executeSqlAsync(
+            "SELECT TIME FROM USERS WHERE USER_ID = @USER_ID",
+            {
+                "USER_ID": { type: tedious.TYPES.VarChar, value: userId },
+            })
+
+        if(rows.length == 0) {
+            await executeSqlAsync(
+                "INSERT INTO USERS (USER_ID, SESSION_ID, TIME) VALUES (@USER_ID, @SESSION_ID, @TIME)",
+                {
+                    "USER_ID": { type: tedious.TYPES.VarChar, value: userId },
+                    "SESSION_ID": { type: tedious.TYPES.VarChar, value: sessionId },
+                    "TIME": { type: tedious.TYPES.Int, value: time }
+                });
+        }
+        else{
+            await executeSqlAsync(
+                "UPDATE USERS SET TIME = @TIME, SESSION_ID = @SESSION_ID WHERE USER_ID = @USER_ID",
+                {
+                    "USER_ID": { type: tedious.TYPES.VarChar, value: userId },
+                    "SESSION_ID": { type: tedious.TYPES.VarChar, value: sessionId },
+                    "TIME": { type: tedious.TYPES.Int, value: time }
+                });
+        }
+        
+        res.cookie("userId", userId.toString(), { maxAge: 86400000 });
+        res.cookie("sessionId", sessionId, { maxAge: 86400000 })
+    res.redirect("/");
 });
 
 addEndpoint(true, "/api/post", async (req) => {
