@@ -169,6 +169,7 @@ addEndpoint(false, "/api/posts", async (req, res) => {
             description: rows[i][3].value
         };
     }
+    result.sort((a, b) => b.time - a.time);
     return { posts: result };
 });
 
