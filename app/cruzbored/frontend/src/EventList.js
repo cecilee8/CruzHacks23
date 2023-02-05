@@ -127,7 +127,7 @@ function EventList() {
 
   return (
 
-    <Box sx={{display: 'block', backgroundImage: 'url(assets/bulletin-texture.jpeg)'}}>
+    <Box sx={{display: 'block', backgroundImage: 'url(assets/bulletin-texture.jpeg)', width: "100%", backgroundSize: "100% auto", backgroundClip: "border-box"}}>
       <CssBaseline />
       <Box
         component='main'
@@ -135,8 +135,6 @@ function EventList() {
           flexGrow: 1,
           mt: 10,
           ml: '2%',
-          width:1980,
-          height: 1800
         }}
       > 
         <List sx={{
