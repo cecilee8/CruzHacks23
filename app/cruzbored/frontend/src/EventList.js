@@ -71,9 +71,97 @@ function EventList() {
           mt: 10,
           ml: '2%',
         }}
-      >
+      > 
         <List >
-          {}
+          {(event).map((item) => (
+            <ListItem disablePadding key={item.id}
+            divider={true}
+          >
+            {console.log(item)}
+            <ListItemButton
+              aria-label={item.title}
+              onClick={() => {
+                console.log(item);
+              }}
+              sx={{
+                display: 'flex',
+                flex: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flex: 15,
+                  flexDirection: 'column',
+                  ml: 4,
+
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flex: '1',
+                    width: '100%',
+                    // mr: 100,
+                    flexDirection: 'row',
+                    marginRight: 'auto',
+                  }}
+                >
+                  <ListItemText
+                    sx={{
+                      display: 'flex',
+                      flex: 1,
+                      // marginLeft: 'auto',
+                      justifyContent: 'flex-end',
+                    }}
+
+                    primary = {item.time }
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flex: 1,
+                    width: '100%',
+                  // mr: 1000,
+                  // flexDirection: 'row',
+                  }}
+                >
+                  {console.log(item.title)}
+                  <ListItemText
+                    primary = {item.title}
+                    // aria-label= {item.title}
+                    // primaryTypographyProps = {{
+                    //   variant: 'subtitle1',
+                    //   style: {
+                    //     fontWeight: ((item.read) ? 'normal' : 'bold'),
+                    //   // fontStyle: 'italic',
+                    //   },
+                    // }}
+                  />
+                </Box>
+                <ListItemText
+                  primary = {item.description}
+                  sx={{
+                  }}
+                  primaryTypographyProps = {{
+                    variant: 'subtitle2',
+                    style: {
+                      color: 'gray',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: '1',
+                      WebkitBoxOrient: 'vertical',
+                    },
+                  }}
+                />
+              </Box>
+            </ListItemButton>
+          </ListItem>
+
+          ))}
         </List>
       </Box>
     </Box>
