@@ -202,22 +202,15 @@ function EventList() {
             src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
             />
                   <ListItemText
-                      sx={{
-                        display: 'flex',
-                        flex: 1,
-                        // marginLeft: 'auto',
-                        justifyContent: 'flex-end',
-                      }}
-                      primary = { new Date(item.time * 1000).toLocaleString() }
-                    />
-                   <ListItemText
                   primary = {item.description}
                   sx={{
+                    marginLeft:1,
+                    flex: 1
                   }}
                   primaryTypographyProps = {{
-                    variant: 'subtitle2',
+                    variant: 'body1',
                     style: {
-                      color: 'gray',
+                      // color: 'gray',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       display: '-webkit-box',
@@ -226,6 +219,24 @@ function EventList() {
                     },
                   }}
                 />
+                  <ListItemText
+                      sx={{
+                        marginRight:1,
+                        display: 'flex',
+                        flex: 1,
+                        // marginLeft: 'auto',
+                        justifyContent: 'flex-end',
+                      }}
+                      primary = { dateFormat(item.time*1000)}
+                      // primary = { new Date(item.time * 1000).toLocaleString() }
+                      primaryTypographyProps = {{
+                        variant: 'subtitle1',
+                        style: {
+                          color: 'gray',
+                        },
+                      }}
+                    />
+                   
                 </Paper>
               </Box>
         </ListItem>
@@ -322,6 +333,46 @@ function EventList() {
     </div>
     </Box>
   );
+}
+function dateFormat(isoDate) {
+  const curDate = new Date();
+  const yesterDate = new Date();
+  yesterDate.setDate(yesterDate.getDate() - 1);
+  const curYear = curDate.getFullYear();
+  const curMonth = curDate.getMonth();
+  const prevDate = new Date(isoDate);
+  const prevYear = prevDate.getFullYear();
+  const prevMonth = prevDate.getMonth();
+  const dateOptions = {
+    month: 'short',
+    day: 'numeric',
+  };
+  const timeOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+  };
+  let monthDif;
+
+  monthDif = (curYear - prevYear) * 12;
+  monthDif -= (prevMonth);
+  monthDif += (curMonth);
+  if (monthDif <= 0) {
+    monthDif = 0;
+  }
+  console.log(curDate);
+  console.log(curDate.getDate());
+  console.log(prevDate.getDate());
+  if (monthDif <= 12) {
+    if (monthDif === 0 && prevDate.getDate() === curDate.getDate()) {
+      return prevDate.toLocaleString('en-US', timeOptions);
+    }
+    if (monthDif === 1 && yesterDate.getDate() === prevDate.getDate()) {
+      return 'Yesterday';
+    }
+    // show month day
+    return prevDate.toLocaleString('en-US', dateOptions);
+  }
+  return prevYear.toString();
 }
 
 export default EventList;
