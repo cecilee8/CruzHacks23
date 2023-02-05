@@ -93,6 +93,7 @@ async function checkAuthenticated(req) {
 }
 
 app.post("/oauth2", async (req, res) => {
+    try {
         var ticket = await authClient.verifyIdToken({
             idToken: req.body.credential,
             audience: process.env.GOOGLE_CLIENT_ID
@@ -129,6 +130,8 @@ app.post("/oauth2", async (req, res) => {
         
         res.cookie("userId", userId.toString(), { maxAge: 86400000 });
         res.cookie("sessionId", sessionId, { maxAge: 86400000 })
+    } catch(err) {
+    }
     res.redirect("/");
 });
 
