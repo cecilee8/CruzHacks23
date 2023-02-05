@@ -26,6 +26,7 @@ function App() {
       <Route path="/login" exact element={<Login />} />
       <Route path="/" exact element={<Home />} />
 
+
         {/* <Route path="/"
             element={
               <AuthenticatedRoute>
