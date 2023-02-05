@@ -23,10 +23,8 @@ import Login from './Login';
 function Home() {
   
   return (
-    
-    
     <Box sx={{display: 'flex'}}>
-              <script src="https://accounts.google.com/gsi/client" async defer></script>
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
       <AppBar
           position = 'fixed'
         >

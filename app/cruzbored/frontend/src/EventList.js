@@ -220,7 +220,7 @@ function EventList() {
                         // marginLeft: 'auto',
                         justifyContent: 'flex-end',
                       }}
-                      primary = {item.time }
+                      primary = { new Date(item.time * 1000).toLocaleString() }
                     />
                    <ListItemText
                   primary = {item.description}
