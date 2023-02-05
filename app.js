@@ -3,11 +3,15 @@ const crypto = require("crypto");
 const express = require("express");
 const tedious = require("tedious");
 const { OAuth2Client } = require('google-auth-library');
+const cors = require('cors');
+
 
 var authClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 var port = process.env.PORT || 8080;
 const app = express();
+app.use(cors());
+
 
 var connection = new tedious.Connection({
     server: 'slugbored.database.windows.net',
