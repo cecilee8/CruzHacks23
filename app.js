@@ -4,13 +4,15 @@ const express = require("express");
 const tedious = require("tedious");
 const { OAuth2Client } = require('google-auth-library');
 const cors = require('cors');
+const path = require("path");
+const cookies = require("cookie-parser");
 
 var authClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 var port = process.env.PORT || 8080;
 const app = express();
 app.use(cors());
-app.use(express.static("./client/"));
+app.use(cookies());
 app.use(express.urlencoded({ extended: true }));
 
 var connection = new tedious.Connection({
@@ -48,7 +50,7 @@ function executeSqlAsync(sql, parameters) {
 function addEndpoint(isPost, endpoint, callback) {
     var expressCallback = async (req, res) => {
         try {
-            var result = await callback(req) || {};
+            var result = await callback(req, res) || {};
             result.ok = true;
             res.send(JSON.stringify(result));
         } catch(error) {
@@ -61,6 +63,33 @@ function addEndpoint(isPost, endpoint, callback) {
     else{
         app.get(endpoint, expressCallback);
     }
+}
+
+async function authenticate(req) {
+    var userId = req.cookies["userId"];
+    var sessionId = req.cookies["sessionId"];
+    if(!userId || !sessionId) {
+        return undefined;
+    }
+    var rows = await executeSqlAsync(
+        "SELECT TIME FROM USERS WHERE USER_ID = @USER_ID AND SESSION_ID = @SESSION_ID",
+        {
+            "USER_ID": { type: tedious.TYPES.VarChar, value: userId },
+            "SESSION_ID": { type: tedious.TYPES.VarChar, value: sessionId }
+        })
+
+    if(rows.length == 0) {
+        return undefined;
+    }
+    return userId;
+}
+
+async function checkAuthenticated(req) {
+    var userId = await authenticate(req);
+    if(userId == undefined) {
+        throw new Error("Not authenticated.");
+    }
+    return userId;
 }
 
 app.post("/oauth2", async (req, res) => {
@@ -103,7 +132,22 @@ app.post("/oauth2", async (req, res) => {
     res.redirect("/");
 });
 
-addEndpoint(true, "/api/post", async (req) => {
+addEndpoint(false, "/api/logout", async (req, res) => {
+    var userId = await authenticate(req);
+    if(userId == undefined) {
+        return;
+    }
+    res.clearCookie("userId");
+    res.clearCookie("sessionId");
+    await executeSqlAsync(
+        "DELETE FROM USERS WHERE USER_ID = @USER_ID",
+        {
+            "USER_ID": { type: tedious.TYPES.VarChar, value: userId }
+        });
+});
+
+addEndpoint(true, "/api/post", async (req, res) => {
+    await checkAuthenticated(req);
     await executeSqlAsync(
         "INSERT INTO POSTS (ID, TIME, TITLE, DESCRIPTION) VALUES (@ID, @TIME, @TITLE, @DESCRIPTION)",
         {
@@ -114,21 +158,7 @@ addEndpoint(true, "/api/post", async (req) => {
         });
 });
 
-addEndpoint(false, "/api/post/:id", async (req) => {
-    var rows = await executeSqlAsync(
-        "SELECT * FROM POSTS WHERE ID=@ID", 
-        {
-            "ID": { type: tedious.TYPES.VarChar, value: req.params.id }
-        });
-    return {
-        id: rows[0][0].value,
-        time: rows[0][1].value,
-        title: rows[0][2].value,
-        description: rows[0][3].value
-    };
-});
-
-addEndpoint(false, "/api/posts", async (req) => {
+addEndpoint(false, "/api/posts", async (req, res) => {
     var rows = await executeSqlAsync("SELECT ID, TIME, TITLE, DESCRIPTION FROM POSTS", {});
     var result = new Array(rows.length);
     for(var i = 0; i < rows.length; i++) {
@@ -140,6 +170,11 @@ addEndpoint(false, "/api/posts", async (req) => {
         };
     }
     return { posts: result };
+});
+
+app.use(express.static("./app/cruzbored/frontend/build"));
+app.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, "app", "cruzbored", "frontend", "build", "index.html"));
 });
 
 connection.connect((err) => {
