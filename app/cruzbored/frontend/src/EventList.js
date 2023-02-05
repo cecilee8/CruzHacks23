@@ -19,6 +19,10 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
+import { UserContext } from './Home';
+import { useContext } from 'react';
+import Cookies from 'js-cookie';
+
 
 
 const Transition = React.forwardRef(function Transition(
@@ -107,34 +111,18 @@ function EventList() {
         console.log('hello');
         
       });
-      // .then((json) => {
-      //   localStorage.setItem('user', JSON.stringify(json));
-      //   history('/');
-      // })
+
       console.log(newpost);
   }
-  // const post = () => {
-  //   localStorage.removeItem('user');
-  //   // setName('');
-  //   // setError('Logged Out');
-  //   navigate('/login');
-  // };
-  // const user = JSON.parse(localStorage.getItem('user'));
+
   const [event, setEvent] = React.useState([]);
-  const [category, setCategory] = React.useState('Main');
+  const {session} = useContext(UserContext);
+  console.log('what the hell' + session);
   const [loggedIn, log] = React.useState();
   React.useEffect(() => {
     fetchEvents('Main', setEvent);
   }, []);
-  // React.useEffect(() => {
-  //   ;
-  // }, Boolean);
-  // const navigate = useNavigate();
-  // const logout = () => {
-  //   localStorage.removeItem('user');
-
-  //   navigate('/login');
-  // };
+  // const [session, setSession] = React.useState(Cookies.get("userId"));
 
 
   return (
@@ -246,6 +234,10 @@ function EventList() {
           ))}
         </List>
       </Box>
+      {/* <UserContext.Provider value={session}> */}
+
+      <div style={{ display: session ? "inline-block" : "none" }}>
+
       <Fab color="primary" aria-label="add"
         onClick={handleClickOpen}
         sx={{
@@ -258,6 +250,10 @@ function EventList() {
         }}>
         <AddIcon />
       </Fab>
+      </div>
+      {/* </UserContext.Provider> */}
+
+
       <div>
       <Dialog
         fullScreen

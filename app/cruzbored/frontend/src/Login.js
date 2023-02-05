@@ -5,12 +5,21 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import IconButton from '@mui/material/IconButton';
 import Cookies from 'js-cookie';
 import Box from '@mui/material/Box';
+import { UserContext } from './Home';
+import { useContext } from 'react';
 
 var google;
 
 function Login() {
-  const [session, setSession] = React.useState(Cookies.get("userId"));
+  const { session, setSession } = useContext(UserContext)
+
+  // const {session, setSession} = useContext(UserContext);
+
+
+  // const [session, setSession] = React.useState(Cookies.get("userId"));
+  
   const divRef = React.useRef(null);
+  
 
   React.useEffect(() => {
     if (divRef.current && google) {
@@ -24,10 +33,7 @@ function Login() {
     }
   }, [divRef.current]);
 
-  // React.useEffect(() => {
-  //   fetchEvents('Main', setEvent);
-  // }, []);
-  // const session = Cookies.get("userId");
+
   const logout = () => {
     console.log('logging out');
     fetch('/api/logout', {
@@ -44,10 +50,14 @@ function Login() {
       if (!json.ok) {
         throw json;
       }
-      setSession(undefined);
+      console.log('b4'+session);
+      setSession();
+
     })
   };
+  console.log('login session: ' + session);
   return (
+    // <UserContext.Provider value={session}>
     <div>
       <div style={{ display: session ? "inline-block" : "none" }}>
         <IconButton onClick={logout}>
@@ -73,6 +83,7 @@ function Login() {
         </div>
       </div>
     </div>
+    //  </UserContext.Provider>
   );
 }
 
