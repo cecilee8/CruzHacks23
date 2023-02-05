@@ -4,9 +4,15 @@ import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
 import Home from './Home';
 import Login from './Login';
 import NotFound from './NotFound';
+import Cookies from 'js-cookie';
 
+
+const session = Cookies.get("userId");
+console.log(session);
 const AuthenticatedRoute = ({children}) => {
-  if (localStorage.getItem('user')) {
+  if (
+    Cookies.get("userId")
+  ) {
     return children;
   }
   console.log('not authenticated');
@@ -15,7 +21,26 @@ const AuthenticatedRoute = ({children}) => {
 
 function App() {
   return (
-    <Home/>
+    <BrowserRouter>
+      <Routes>
+      <Route path="/login" exact element={<Login />} />
+        <Route path="/"
+            element={
+              <AuthenticatedRoute>
+                <NotFound/>
+                <Home />
+              </AuthenticatedRoute>} />
+        {/* <Home/> */}
+          <Route
+            path='*'
+            element={
+              <AuthenticatedRoute>
+                <NotFound />
+              </AuthenticatedRoute>
+            }
+          /> 
+      </Routes>
+    </BrowserRouter>
     // <Routes>
     //     <Route path="/"
     //       element={
