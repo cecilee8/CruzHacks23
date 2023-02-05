@@ -4,6 +4,8 @@ const express = require("express");
 const tedious = require("tedious");
 const { OAuth2Client } = require('google-auth-library');
 
+var authClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 var port = process.env.PORT || 8080;
 const app = express();
 
@@ -59,6 +61,17 @@ function addEndpoint(isPost, endpoint, callback) {
         app.get(endpoint, expressCallback);
     }
 }
+
+app.post("/oauth2", async (req, res) => {
+    var ticket = await authClient.verifyIdToken({
+        idToken: req.body.credential,
+        audience: process.env.GOOGLE_CLIENT_ID
+    });
+    var payload = ticket.getPayload();
+    var userId = payload["sub"];
+    res.cookie("userId", userId.toString(), { maxAge: 86400000 });
+    res.send(userId);
+});
 
 addEndpoint(true, "/api/post", async (req) => {
     await executeSqlAsync(
