@@ -122,9 +122,13 @@ function EventList() {
   // const user = JSON.parse(localStorage.getItem('user'));
   const [event, setEvent] = React.useState([]);
   const [category, setCategory] = React.useState('Main');
+  const [loggedIn, log] = React.useState();
   React.useEffect(() => {
     fetchEvents('Main', setEvent);
   }, []);
+  // React.useEffect(() => {
+  //   ;
+  // }, Boolean);
   // const navigate = useNavigate();
   // const logout = () => {
   //   localStorage.removeItem('user');

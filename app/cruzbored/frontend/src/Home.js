@@ -13,6 +13,7 @@ import {Avatar, IconButton, ListItemButton,
 
   import Fab from '@mui/material/Fab';
   import AddIcon from '@mui/icons-material/Add';
+import Login from './Login';
 
 
 
@@ -20,15 +21,19 @@ import {Avatar, IconButton, ListItemButton,
  * @return {object} JSX Table
  */
 function Home() {
+  
   return (
+    
+    
     <Box sx={{display: 'flex'}}>
+              <script src="https://accounts.google.com/gsi/client" async defer></script>
       <AppBar
           position = 'fixed'
         >
                 <CssBaseline />
           <Toolbar >
             <Typography variant = 'h6' noWrap component ='div'>
-              {'Cruz Bored'}
+              {'SlugBored'}
             </Typography>
             <Tooltip title="Log Out">
               <IconButton
@@ -41,8 +46,8 @@ function Home() {
                   ml: 'auto',
                 }}
               >
-                <Avatar>
-                  {'Kenny'}</Avatar>
+
+                  <Login></Login>
               </IconButton>
             </Tooltip>
 
